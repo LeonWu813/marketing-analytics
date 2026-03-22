@@ -3,6 +3,7 @@ package com.leon.marketing_analytics.service;
 import com.leon.marketing_analytics.dto.AuthResponse;
 import com.leon.marketing_analytics.dto.LoginRequest;
 import com.leon.marketing_analytics.dto.RegisterRequest;
+import com.leon.marketing_analytics.exception.ResourceAlreadyExistsException;
 import com.leon.marketing_analytics.security.JwtService;
 
 import com.leon.marketing_analytics.entity.User;
@@ -24,7 +25,7 @@ public class UserService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalStateException("Email already registered!");
+            throw new ResourceAlreadyExistsException("Email already registered!");
         }
         String hashedPassword = passwordEncoder.encode(request.password());
         User user = User.builder()

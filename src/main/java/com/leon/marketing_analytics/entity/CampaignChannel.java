@@ -6,5 +6,6 @@ public enum CampaignChannel {
     SOCIAL,
     EMAIL,
     EVENT,
+    DIRECT,
     OTHER
 }

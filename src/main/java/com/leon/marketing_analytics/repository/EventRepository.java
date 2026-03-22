@@ -20,7 +20,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (:startDate IS NULL OR e.createdAt >= :startDate) " +
             "AND (:endDate IS NULL OR e.createdAt <= :endDate) " +
             "ORDER BY e.createdAt DESC")
-    Page<Event> findByUserWithFilters(
+    Page<Event> findBySiteWithFilters(
             @Param("siteId") Long siteId,
             @Param("campaignId") Long campaignId,
             @Param("eventType") String eventType,

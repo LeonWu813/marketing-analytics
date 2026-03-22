@@ -14,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class CampaignService {
@@ -48,7 +46,8 @@ public class CampaignService {
     private Campaign findCampaignAndValidateOwnership(Long id, Long site_id, User user) {
         Campaign searched = campaignRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Campaign not found"));
 
-        if (!searched.getSite().getId().equals(site_id)) {
+        if (!searched.getSite().getId().equals(site_id) ||
+                !searched.getUser().getId().equals(user.getId())) {
             throw new ForbiddenException("Access forbidden");
         }
 
@@ -86,21 +85,9 @@ public class CampaignService {
     @Transactional(readOnly = true)
     public Page<CampaignResponse> getCampaigns(
             User user, Long site_id, CampaignStatus status, CampaignChannel channel, Pageable pageable) {
-        Page<Campaign> searchedCampaigns;
         Site site = getSite(site_id, user);
-        if (status == null && channel == null) {
-            searchedCampaigns = campaignRepository
-                    .findAllByUserAndSiteAndIsArchivedFalse(user, site, pageable);
-        } else if (status == null) {
-            searchedCampaigns = campaignRepository
-                    .findAllByUserAndSiteAndChannelAndIsArchivedFalse(user, site, channel, pageable);
-        } else if (channel == null) {
-            searchedCampaigns = campaignRepository
-                    .findAllByUserAndSiteAndStatusAndIsArchivedFalse(user, site, status, pageable);
-        } else {
-            searchedCampaigns = campaignRepository
-                    .findAllByUserAndSiteAndStatusAndChannelAndIsArchivedFalse(user, site, status, channel, pageable);
-        }
+        Page<Campaign> searchedCampaigns = campaignRepository
+                .findByUserAndSiteWithFilters(user, site, status, channel, pageable);
 
         return searchedCampaigns.map(this::toResponse);
     }
