@@ -9,7 +9,7 @@ public record RegisterRequest(
         @NotBlank @Email String email,
         @NotBlank
         @Size(min = 8, max = 30)
-        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$",
+        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$",
                 message = "Password must contain at least one letter and one digit")
         String password
 ) {

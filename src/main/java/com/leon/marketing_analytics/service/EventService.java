@@ -24,6 +24,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final SiteRepository siteRepository;
     private final CampaignRepository campaignRepository;
+    private final GeoIpService geoIpService;
 
     private CampaignChannel categorizeChannel(String utmMedium){
         if (utmMedium == null) return CampaignChannel.OTHER;
@@ -79,7 +80,7 @@ public class EventService {
                 .metadata(request.metadata())
                 .userIdentifier(request.userIdentifier())
                 .channel(categorizeChannel(request.utmMedium()))
-                .country("Unknown")
+                .country(geoIpService.getCountry(ipAddress))
                 .build();
 
         eventRepository.save(event);
