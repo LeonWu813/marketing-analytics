@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -36,9 +37,15 @@ public class Event {
     @JoinColumn(name = "campaign_id")
     private Campaign campaign;
 
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 
     @Column(nullable = false, length = 50)
     private String eventType;

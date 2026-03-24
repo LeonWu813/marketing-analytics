@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,7 +69,6 @@ public class EventService {
                 ? campaignRepository.findById(request.campaignId()).orElse(null)
                 : null;
 
-
         Event event = Event.builder()
                 .site(site)
                 .campaign(campaign)
@@ -93,6 +93,9 @@ public class EventService {
                                          Long campaignId,
                                          String eventType,
                                          CampaignChannel channel,
+                                         String utmSource,
+                                         String utmMedium,
+                                         String country,
                                          LocalDate startDate,
                                          LocalDate endDate,
                                          Pageable pageable,
@@ -107,7 +110,7 @@ public class EventService {
 
 
         Page<Event> events = eventRepository.findBySiteWithFilters(site.getId(),
-                campaignId, eventType, channel, start, end, pageable);
+                campaignId, eventType, channel, utmSource, utmMedium, country, start, end, pageable);
 
         return events.map(this::toResponse);
     }

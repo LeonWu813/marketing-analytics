@@ -21,8 +21,8 @@ public class CampaignService {
     private final CampaignRepository campaignRepository;
     private final SiteRepository siteRepository;
 
-    private Site getSite(Long site_id, User user) {
-        return siteRepository.findByIdAndUser(site_id, user)
+    private Site getSite(String site_code, User user) {
+        return siteRepository.findBySiteCodeAndUser(site_code, user)
                 .orElseThrow(() -> new ResourceNotFoundException("The campaign doesn't exist in this site."));
     }
 
@@ -43,10 +43,10 @@ public class CampaignService {
                 campaign.isArchived());
     }
 
-    private Campaign findCampaignAndValidateOwnership(Long id, Long site_id, User user) {
+    private Campaign findCampaignAndValidateOwnership(Long id, String site_code, User user) {
         Campaign searched = campaignRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Campaign not found"));
 
-        if (!searched.getSite().getId().equals(site_id) ||
+        if (!searched.getSite().getSiteCode().equals(site_code) ||
                 !searched.getUser().getId().equals(user.getId())) {
             throw new ForbiddenException("Access forbidden");
         }
@@ -55,10 +55,10 @@ public class CampaignService {
     }
 
     @Transactional
-    public CampaignResponse createCampaign(CreateCampaignRequest request, Long site_id, User user) {
+    public CampaignResponse createCampaign(CreateCampaignRequest request, String site_code, User user) {
         Campaign campaign = Campaign.builder()
                 .campaignName(request.campaignName())
-                .site(getSite(site_id, user))
+                .site(getSite(site_code, user))
                 .campaignDescription(request.campaignDescription())
                 .cost(request.cost())
                 .channel(request.channel())
@@ -76,16 +76,16 @@ public class CampaignService {
     }
 
     @Transactional(readOnly = true)
-    public CampaignResponse getCampaignById(Long id, Long site_id, User user) {
-        Campaign searched = findCampaignAndValidateOwnership(id, site_id, user);
+    public CampaignResponse getCampaignById(Long id, String site_code, User user) {
+        Campaign searched = findCampaignAndValidateOwnership(id, site_code, user);
 
         return toResponse(searched);
     }
 
     @Transactional(readOnly = true)
     public Page<CampaignResponse> getCampaigns(
-            User user, Long site_id, CampaignStatus status, CampaignChannel channel, Pageable pageable) {
-        Site site = getSite(site_id, user);
+            User user, String site_code, CampaignStatus status, CampaignChannel channel, Pageable pageable) {
+        Site site = getSite(site_code, user);
         Page<Campaign> searchedCampaigns = campaignRepository
                 .findByUserAndSiteWithFilters(user, site, status, channel, pageable);
 
@@ -94,9 +94,9 @@ public class CampaignService {
 
     @Transactional
     public CampaignResponse updateCampaign(
-            Long id, Long site_id, UpdateCampaignRequest updateCampaignRequest, User user) {
+            Long id, String site_code, UpdateCampaignRequest updateCampaignRequest, User user) {
 
-        Campaign searched = findCampaignAndValidateOwnership(id, site_id, user);
+        Campaign searched = findCampaignAndValidateOwnership(id, site_code, user);
 
         searched.setCampaignName(updateCampaignRequest.campaignName());
         searched.setCampaignDescription(updateCampaignRequest.campaignDescription());
@@ -117,9 +117,9 @@ public class CampaignService {
     }
 
     @Transactional
-    public void deleteCampaign(Long id, Long site_id, User user) {
+    public void deleteCampaign(Long id, String site_code, User user) {
 
-        Campaign searched = findCampaignAndValidateOwnership(id, site_id, user);
+        Campaign searched = findCampaignAndValidateOwnership(id, site_code, user);
 
         searched.setStatus(CampaignStatus.END);
         searched.setArchived(true);

@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public interface SiteRepository extends JpaRepository<Site, Long> {
 
-    Optional<Site> findByIdAndUser(Long id, User user);
+    Optional<Site> findBySiteCodeAndUser(String siteCode, User user);
 
     Optional<Site> findBySiteCode(String siteCode);
 
     List<Site> findAllByUser(User user);
+
+    Optional<Site> getBySiteName(String siteName);
 }
