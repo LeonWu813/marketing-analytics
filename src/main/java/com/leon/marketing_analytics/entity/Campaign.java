@@ -37,7 +37,7 @@ public class Campaign {
     @Column(nullable = false)
     private String campaignName;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String campaignDescription;
 
     @Column

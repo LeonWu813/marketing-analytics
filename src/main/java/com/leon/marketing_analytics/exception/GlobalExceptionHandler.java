@@ -54,6 +54,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    @ExceptionHandler(SeoAnalysisException.class)
+    public ResponseEntity<ErrorResponse> seoAnalysisException(SeoAnalysisException e) {
+        ErrorResponse body = new ErrorResponse
+                (503, "Service Unavailable", e.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(body);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception e) {
         ErrorResponse body = new ErrorResponse

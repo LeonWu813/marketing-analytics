@@ -109,7 +109,7 @@ public class EventService {
         LocalDateTime end   = endDate   != null ? endDate.atTime(LocalTime.MAX) : null;
 
 
-        Page<Event> events = eventRepository.findBySiteWithFilters(site.getId(),
+        Page<Event> events = eventRepository.findBySiteWithFilters(site.getSiteCode(),
                 campaignId, eventType, channel, utmSource, utmMedium, country, start, end, pageable);
 
         return events.map(this::toResponse);

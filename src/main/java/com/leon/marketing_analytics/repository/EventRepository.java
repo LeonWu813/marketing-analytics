@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e " +
-            "WHERE e.site.id = :siteId " +
+            "WHERE e.site.siteCode = :siteCode " +
             "AND (:campaignId IS NULL OR e.campaign.id = :campaignId) " +
             "AND (:eventType IS NULL OR e.eventType = :eventType) " +
             "AND (:channel IS NULL OR e.channel = :channel) " +
@@ -25,7 +25,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (:endDate IS NULL OR e.createdAt <= :endDate) " +
             "ORDER BY e.createdAt DESC")
     Page<Event> findBySiteWithFilters(
-            @Param("siteId") Long siteId,
+            @Param("siteCode") String siteCode,
             @Param("campaignId") Long campaignId,
             @Param("eventType") String eventType,
             @Param("channel") CampaignChannel channel,
