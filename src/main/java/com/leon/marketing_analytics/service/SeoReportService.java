@@ -16,11 +16,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SeoAnalysisService {
+public class SeoReportService {
 
     private final SeoReportRepository seoReportRepository;
     private final SiteRepository siteRepository;
@@ -62,12 +63,14 @@ public class SeoAnalysisService {
     }
 
     @Transactional
-    public SeoReportResponse analyze(String analyzedUrl, String keyword, String siteCode, User user) {
-        Site site = checkSiteOwnership(siteCode, user);
+    public SeoReport buildAndSaveReport(Site site, String analyzedUrl, String keyword, boolean isFollowUpEmail) {
         SeoReport report = SeoReport.builder()
                 .site(site)
                 .analyzedUrl(analyzedUrl)
-                .keyword(keyword).build();
+                .keyword(keyword)
+                .followUpCompleted(isFollowUpEmail)
+                .followUpAt(!isFollowUpEmail ? LocalDateTime.now().plusDays(7) : null)
+                .build();
 
         List<SeoCheckResult> jsoupScraper = jsoupScraperService.scrapeUrl(analyzedUrl, keyword);
         List<SeoCheck> checks = jsoupScraper.stream()
@@ -82,10 +85,16 @@ public class SeoAnalysisService {
         report.setTbtMilliseconds(pageSpeedInsight.tbtMilliseconds());
         report.setRunWarnings(pageSpeedInsight.warnings());
         report.setPagespeedRaw(pageSpeedInsight.rawResponse());
+
         seoReportRepository.save(report);
+        return report;
+    }
 
+    @Transactional
+    public SeoReportResponse analyze(String analyzedUrl, String keyword, String siteCode, User user) {
+        Site site = checkSiteOwnership(siteCode, user);
+        SeoReport report = buildAndSaveReport(site, analyzedUrl, keyword, false);
         return toResponse(report);
-
     }
 
 

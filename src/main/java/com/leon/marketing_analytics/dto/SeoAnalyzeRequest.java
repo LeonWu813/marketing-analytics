@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.URL;
 
 public record SeoAnalyzeRequest (
         @NotBlank @URL String analyzedUrl,
-        String keyword
+        String keyword,
+        boolean isFollowUp
 ) {
 }

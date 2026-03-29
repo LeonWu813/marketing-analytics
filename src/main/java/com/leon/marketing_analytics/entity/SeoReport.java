@@ -1,6 +1,7 @@
 package com.leon.marketing_analytics.entity;
 
 import jakarta.persistence.*;
+import jdk.jfr.BooleanFlag;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -14,7 +15,8 @@ import java.util.Map;
 @Entity
 @Table(name = "seo_reports",
         indexes = {
-                @Index(name = "idx_seo_reports_site_id", columnList = "site_id")
+                @Index(name = "idx_seo_reports_site_id", columnList = "site_id"),
+                @Index(name = "idx_seo_reports_follow_up", columnList = "follow_up_completed, follow_up_at")
         })
 @Getter
 @Setter
@@ -39,6 +41,12 @@ public class SeoReport {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime analyzedAt;
 
+    @Column(name = "follow_up_at")
+    private LocalDateTime followUpAt;
+
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean followUpCompleted = false;
 
     @Builder.Default
     @OneToMany(mappedBy = "seoReport", cascade = CascadeType.ALL, orphanRemoval = true)

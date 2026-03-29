@@ -3,7 +3,7 @@ package com.leon.marketing_analytics.controller;
 import com.leon.marketing_analytics.dto.SeoAnalyzeRequest;
 import com.leon.marketing_analytics.dto.SeoReportResponse;
 import com.leon.marketing_analytics.entity.User;
-import com.leon.marketing_analytics.service.SeoAnalysisService;
+import com.leon.marketing_analytics.service.SeoReportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SeoController {
 
-    private final SeoAnalysisService seoAnalysisService;
+    private final SeoReportService seoReportService;
 
     @PostMapping("/analyze")
     public ResponseEntity<SeoReportResponse> analyze(
@@ -28,7 +28,8 @@ public class SeoController {
             @AuthenticationPrincipal User currentUser
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(seoAnalysisService.analyze(request.analyzedUrl(), request.keyword(), site_code, currentUser));
+                .body(seoReportService.analyze(
+                        request.analyzedUrl(), request.keyword(), site_code, currentUser));
     }
 
     @GetMapping("/reports")
@@ -38,7 +39,6 @@ public class SeoController {
             @PageableDefault(size = 20, sort = "analyzedAt") Pageable pageable,
             @AuthenticationPrincipal User currentUser
     ) {
-        return ResponseEntity.ok(seoAnalysisService.getReports(site_code, analyzedUrl, pageable, currentUser));
+        return ResponseEntity.ok(seoReportService.getReports(site_code, analyzedUrl, pageable, currentUser));
     }
-
 }
