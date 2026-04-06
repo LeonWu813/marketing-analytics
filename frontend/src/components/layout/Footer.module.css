@@ -1,0 +1,36 @@
+footer {
+    padding: 32px;
+    margin-top: auto;
+}
+
+footer>div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--max-content);
+}
+
+.footerName {
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.7px;
+    color: var(--color-logo);
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.footerCredit {
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 1.2px;
+    color: var(--color-inactive);
+}
+
+.contact {
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 1.2px;
+    color: var(--color-inactive);
+}

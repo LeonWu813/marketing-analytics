@@ -1,0 +1,149 @@
+@import './variables.css';
+
+
+
+.content {
+    padding: 32px 40px;
+    max-width: var(--max-content);
+    background-color: var(--color-background);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-large);
+}
+
+.grid-3 {
+    grid-template-columns: repeat(1fr, 3);
+    gap: var(--gap-medium);
+}
+
+.center {
+    text-align: center;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    line-height: 28px;
+    color: var(--color-logo);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.link {
+    text-decoration: none;
+    color: var(--color-primary);
+}
+
+.link:hover {
+    color: var(--color-hover);
+}
+
+
+h1 {
+    font-size: 34px;
+    line-height: 40px;
+    color: var(--color-text-h);
+}
+
+.titles {
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0.5px;
+    font-weight: 600;
+    color: var(--color-text-h);
+}
+
+p {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--color-text-p);
+}
+
+.link {
+    cursor: pointer;
+}
+
+.link:hover {
+    color: var(--color-primary);
+}
+
+.input {
+    background-color: var(--color-gray);
+    border-radius: 4px;
+    padding: 14px 12px;
+    border: none;
+}
+
+.label {
+    font-size: 12px;
+    line-height: 16px;
+    word-spacing: 1.2px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--color-text-p);
+}
+
+.placeholder {
+    font-size: 16px;
+    color: var(--color-text-placeholder);
+}
+
+.warning {
+    font-size: 12px;
+    line-height: 16px;
+    word-spacing: 1.2px;
+    font-weight: 600;
+    color: var(--color-warning);
+}
+
+.disclaimer {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 19.5px;
+}
+
+.button-primary {
+    cursor: pointer;
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 700;
+    display: flex;
+    gap: var(--text-gap);
+    padding: 16px 24px;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    border: none;
+}
+
+.button-primary:hover {
+    background-color: var(--color-hover);
+}
+
+.button-secondary {
+    cursor: pointer;
+    background-color: var(--color-gray);
+    color: var(--color-text-h);
+    display: flex;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+    gap: var(--text-gap);
+    padding: 16px 24px;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    border: none;
+}
+
+.button-small {
+    font-weight: 400;
+    padding: 8px 16px;
+}
+
+.unselectable {
+    cursor: default;
+}

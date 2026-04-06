@@ -8,6 +8,7 @@ import SingleSitePage from '../pages/SingleSitePage'
 import CampaignsPage from '../pages/CampaignsPage'
 import SeoPage from '../pages/SeoPage'
 import SingleSeoPage from '../pages/SingleSeoPage'
+import AppShell from '../components/layout/AppShell'
 
 function ProtectedRoute() {
     const isAuthenticated = useSelector(
@@ -21,12 +22,16 @@ const router = createBrowserRouter([
     { path: '/register', element: <RegisterPage /> },
     {
         element: <ProtectedRoute />,
-        children: [
-            { path: '/app/sites', element: <SitesPage /> },
-            { path: '/app/sites/:siteCode', element: <SingleSitePage /> },
-            { path: '/app/:siteCode/campaigns', element: <CampaignsPage /> },
-            { path: '/app/:siteCode/seo/reports', element: <SeoPage /> },
-            { path: '/app/:siteCode/seo/analyze/:id', element: <SingleSeoPage /> },
+        children: [{
+            element: <AppShell />,
+            children: [
+                { path: '/app/sites', element: <SitesPage /> },
+                { path: '/app/sites/:siteCode', element: <SingleSitePage /> },
+                { path: '/app/:siteCode/campaigns', element: <CampaignsPage /> },
+                { path: '/app/:siteCode/seo/reports', element: <SeoPage /> },
+                { path: '/app/:siteCode/seo/analyze/:id', element: <SingleSeoPage /> },
+            ]
+        }
         ]
     },
     { path: '/', element: <Navigate to="/login" /> }

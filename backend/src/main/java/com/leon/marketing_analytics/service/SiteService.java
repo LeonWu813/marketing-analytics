@@ -19,7 +19,7 @@ public class SiteService {
     private final SiteRepository siteRepository;
 
     private SiteResponse toResponse(Site site) {
-        return new SiteResponse(site.getId(), site.getSiteCode(), site.getSiteName());
+        return new SiteResponse(site.getId(), site.getSiteCode(), site.getSiteName(), site.getSiteDomain());
     }
 
     private Site validateSiteOwner(String siteCode, User user) {
@@ -33,6 +33,7 @@ public class SiteService {
         Site site = Site.builder()
                 .siteCode(UUID.randomUUID().toString())
                 .siteName(request.siteName())
+                .siteDomain(request.siteDomain())
                 .user(user)
                 .build();
 

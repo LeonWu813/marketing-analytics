@@ -2,8 +2,11 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import styles from './LoginRegisterPage.module.css'
 import { register } from '../api/authApi'
 import { setCredentials } from '../store/authSlice'
+import { APP_NAME } from '../src/constants'
+import Footer from '../components/layout/Footer'
 
 export default function RegisterPage() {
     const dispatch = useDispatch()
@@ -35,28 +38,61 @@ export default function RegisterPage() {
         }
     }
 
-    return <div>
-        <h1>Register</h1>
-        <form onSubmit={handleSubmit}>
-            <input type='email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder='Email' />
-            <input type='password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder='Password' />
-            <input
-                type='password'
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder='Confirm Password'
-            />
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <button type="submit"
-                disabled={loading}>
-                {loading ? 'Registering...' : 'Register'}
-            </button>
-        </form>
-    </div>;
+    return <>
+        <section className={styles.loginPage}>
+            <div className={styles.loginPannel}>
+                <div className={`center ${styles.titleContainer}`}>
+                    <h1 className='unselectable'>{APP_NAME}</h1>
+                    <p>Precision analytics for the modern strategist.</p>
+                </div>
+                <div className={styles.formContainer}>
+                    <form onSubmit={handleSubmit} className={styles.form}>
+                        <div className={styles.loginField}>
+                            <label htmlFor="email" className='label'>Email Address</label>
+                            <input
+                                id='email'
+                                autoComplete='on'
+                                type='email'
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder='name@company.com'
+                                className="input" />
+                        </div>
+                        <div className={styles.loginField}>
+                            <label htmlFor="password" className='label'>Password</label>
+                            <input
+                                id='password'
+                                type='password'
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder=' • • • • • • • • '
+                                className="input" />
+                        </div>
+                        <div className={styles.loginField}>
+                            <label htmlFor="password-confirm" className='label'>Confirm Password</label>
+                            <input
+                                id='password-confirm'
+                                type='password'
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder=' • • • • • • • • '
+                                className="input"
+                            />
+                        </div>
+                        {error && <div className={styles.warningContainer}><p className="warning">{error}</p></div>}
+                        <button
+                            className='button-primary' type="submit"
+                            disabled={loading}>
+                            {loading ? 'Registering...' : 'Register'}
+                        </button>
+                    </form>
+                    <div className={styles.newUserContainer}>
+                        <div className={styles.divider}></div>
+                    </div>
+                    <p className='center'>Already have an account? <a href="/login" className="link">Login</a></p>
+                </div>
+            </div>
+        </section>
+        < Footer />
+    </>;
 }

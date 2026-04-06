@@ -1,0 +1,109 @@
+.loginPage {
+    background-color: var(--color-background);
+    width: 100%;
+    height: 100vh;
+    max-height: calc(100vh - 103px);
+    background-image: url(/src/assets/login-bg.png);
+    background-size: cover;
+}
+
+.loginPannel {
+    max-width: 520px;
+    margin: auto;
+    padding: 100px 40px 70px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--gap-medium);
+}
+
+.titleContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+}
+
+.formContainer {
+    padding: 32px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-medium);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-medium);
+    position: relative;
+}
+
+.loginField {
+    display: flex;
+    flex-direction: column;
+    gap: var(--text-gap);
+}
+
+.inputContainer {
+    position: relative;
+}
+
+.inputContainer input {
+    width: 100%;
+}
+
+.inputContainer::before {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.inputEmail::before {
+    background-image: url(/src/assets/email.svg);
+}
+
+.inputPassword::before {
+    background-image: url(/src/assets/password.svg);
+}
+
+.warningContainer {
+    position: absolute;
+    bottom: 58px;
+    left: 6px;
+}
+
+.loginInput {
+    padding-left: 40px !important;
+}
+
+.newUserContainer {
+    position: relative;
+    z-index: 1;
+    padding: 16px 0;
+}
+
+.newUserTitle {
+    color: var(--color-text-gray);
+    text-transform: none;
+    padding: 0px 20px;
+    background: var(--color-background);
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: var(--color-text-gray);
+    position: absolute;
+    top: 50%;
+    z-index: -1;
+}

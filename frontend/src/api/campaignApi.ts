@@ -2,8 +2,9 @@ import type { CampaignChannel, CampaignResponse, CampaignStatus, CreateCampaignR
 import axiosInstance from "./axiosInstance";
 import type { PageResponse } from '../types/common'
 
-export function createCampaign(data: CreateCampaignRequest): Promise<CampaignResponse> {
-    return axiosInstance.post<CampaignResponse>('/api/:siteCode/campaigns', data)
+export function createCampaign(siteCode: string,
+    data: CreateCampaignRequest): Promise<CampaignResponse> {
+    return axiosInstance.post<CampaignResponse>(`/api/${siteCode}/campaigns`, data)
         .then(res => res.data)
 }
 

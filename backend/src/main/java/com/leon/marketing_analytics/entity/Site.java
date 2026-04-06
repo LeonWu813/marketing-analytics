@@ -21,6 +21,9 @@ public class Site {
     @Column(length = 50, nullable = false)
     private String siteName;
 
+    @Column(nullable = false)
+    private String siteDomain;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

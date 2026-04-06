@@ -34,11 +34,12 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Already create this user in database
         User user = userRepository.getByEmail("test@example.co")
-                .orElseThrow(()-> new AccessDeniedException("Please create a user: test@example.co"));
+                .orElseThrow(() -> new AccessDeniedException("Please create a user: test@example.co"));
 
         Site site = siteRepository.getBySiteName("Test Site")
                 .orElseGet(() -> siteRepository.save(Site.builder()
-                        .siteName("Test Site").siteCode(UUID.randomUUID().toString()).user(user).build()));
+                        .siteName("Test Site").siteCode(UUID.randomUUID().toString()).user(user).siteDomain("example.com")
+                        .build()));
 
         if (eventRepository.findBySite(site, PageRequest.of(0, 10)).getTotalElements() > 50L) {
             System.out.println("DataSeeder: data already present, skipping.");
