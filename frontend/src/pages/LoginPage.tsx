@@ -37,8 +37,6 @@ export default function LoginPage() {
         }
     }
 
-
-
     return <>
         <section className={styles.loginPage}>
             <div className={styles.loginPannel}>
@@ -48,7 +46,7 @@ export default function LoginPage() {
                 </div>
                 <div className={styles.formContainer}>
                     <form onSubmit={handleSubmit} className={styles.form}>
-                        <div className={styles.loginField}>
+                        <div className="form-field-container">
                             <label htmlFor="email" className='label'>Email Address</label>
                             <div className={`${styles.inputContainer} ${styles.inputEmail}`}>
                                 <input type='email'
@@ -60,7 +58,7 @@ export default function LoginPage() {
                                     className={`input ${styles.loginInput}`} />
                             </div>
                         </div>
-                        <div className={styles.loginField}>
+                        <div className="form-field-container">
                             <label htmlFor="password" className='label'>Password</label>
                             <div className={`${styles.inputContainer} ${styles.inputPassword}`}>
                                 <input type='password'

@@ -8,4 +8,5 @@ export interface SiteResponse {
     siteCode: string
     siteName: string
     siteDomain: string
+    active: boolean
 }

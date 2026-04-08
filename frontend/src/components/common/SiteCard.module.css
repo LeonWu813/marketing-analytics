@@ -1,0 +1,71 @@
+.siteCard {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+}
+
+.siteCardIcons {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--color-blue-bg);
+    background-image: url(/src/assets/site.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+}
+
+.tag {
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 15px;
+    letter-spacing: -0.5px;
+    color: black;
+}
+
+.activeTag {
+    background-color: var(--color-active);
+}
+
+.inactiveTag {
+    background-color: var(--color-container-bg);
+}
+
+.contentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--text-gap-small);
+}
+
+.description {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.siteCardLink {
+    margin-left: auto;
+}
+
+.siteCardLink>p {
+    color: var(--color-primary);
+}
+
+.siteCardLink::after {
+    content: "";
+    display: block;
+    width: 12px;
+    height: 12px;
+    background-image: url(/src/assets/arrow-blue.svg);
+    background-size: cover;
+}

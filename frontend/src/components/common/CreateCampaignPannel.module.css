@@ -1,0 +1,59 @@
+.newCampaignPannel {
+    background-color: white;
+    padding: 40px 32px;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-medium);
+    border-bottom: 3px solid var(--color-primary);
+}
+
+.newCampaignTitle {
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: -0.45px;
+    font-weight: 700;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.newCampaignTitle::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background-image: url("/src/assets/write.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.formContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-small);
+}
+
+.column2 {
+    grid-column: span 2;
+}
+
+.column3 {
+    grid-column: span 3;
+}
+
+.submitContainer {
+    display: flex;
+    gap: var(--gap-small);
+    padding-top: 12px;
+    margin-left: auto;
+}
+
+.cancel {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--color-text-p);
+}

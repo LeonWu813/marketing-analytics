@@ -9,8 +9,8 @@ export interface UpdateCampaignRequest {
     cost?: number
     startDate?: string
     endDate?: string
-    status: CampaignStatus
     channel: CampaignChannel
+    status: CampaignStatus
     metricName?: string
     metricValue?: number
     benchmarkMetricName?: string

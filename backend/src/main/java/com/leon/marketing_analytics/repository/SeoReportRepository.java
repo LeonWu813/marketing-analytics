@@ -16,7 +16,8 @@ public interface SeoReportRepository extends JpaRepository<SeoReport, Long> {
 
     @Query("SELECT r FROM SeoReport r " +
             "WHERE r.site.siteCode = :siteCode " +
-            "AND (:analyzedUrl IS NULL OR r.analyzedUrl = :analyzedUrl)"
+            "AND (:analyzedUrl IS NULL OR r.analyzedUrl = :analyzedUrl)" +
+            "ORDER BY r.analyzedAt DESC"
     )
     Page<SeoReport> findBySiteCodeWithFilters(
             @Param("siteCode") String siteCode,

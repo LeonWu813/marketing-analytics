@@ -1,19 +1,17 @@
 @import './variables.css';
 
-
-
 .content {
     padding: 32px 40px;
     max-width: var(--max-content);
     background-color: var(--color-background);
-    margin: auto;
     display: flex;
     flex-direction: column;
     gap: var(--gap-large);
 }
 
 .grid-3 {
-    grid-template-columns: repeat(1fr, 3);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--gap-medium);
 }
 
@@ -64,8 +62,21 @@ p {
     cursor: pointer;
 }
 
+.linkWithIcon {
+    display: flex;
+    gap: var(--text-gap-small);
+    align-items: center;
+    text-decoration: none;
+}
+
 .link:hover {
     color: var(--color-primary);
+}
+
+.form-field-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--text-gap);
 }
 
 .input {
@@ -73,6 +84,35 @@ p {
     border-radius: 4px;
     padding: 14px 12px;
     border: none;
+    color: var(--color-text-h);
+}
+
+.input::placeholder {
+    color: #888888;
+    opacity: 1;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.select {
+    appearance: none;
+    background-image: url(/src/assets/dropdown.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: contain;
+    padding-right: 36px;
+    cursor: pointer;
 }
 
 .label {
@@ -115,7 +155,7 @@ p {
     padding: 16px 24px;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     border: none;
 }
 
@@ -135,13 +175,28 @@ p {
     padding: 16px 24px;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     border: none;
 }
 
 .button-small {
     font-weight: 400;
     padding: 8px 16px;
+}
+
+.button-with-icon {
+    padding-left: 46px;
+    position: relative;
+}
+
+.button-with-icon::before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 24px;
 }
 
 .unselectable {

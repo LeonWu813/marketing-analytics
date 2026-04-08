@@ -47,7 +47,7 @@ export default function RegisterPage() {
                 </div>
                 <div className={styles.formContainer}>
                     <form onSubmit={handleSubmit} className={styles.form}>
-                        <div className={styles.loginField}>
+                        <div className="form-field-container">
                             <label htmlFor="email" className='label'>Email Address</label>
                             <input
                                 id='email'
@@ -58,7 +58,7 @@ export default function RegisterPage() {
                                 placeholder='name@company.com'
                                 className="input" />
                         </div>
-                        <div className={styles.loginField}>
+                        <div className="form-field-container">
                             <label htmlFor="password" className='label'>Password</label>
                             <input
                                 id='password'
@@ -68,7 +68,7 @@ export default function RegisterPage() {
                                 placeholder=' • • • • • • • • '
                                 className="input" />
                         </div>
-                        <div className={styles.loginField}>
+                        <div className="form-field-container">
                             <label htmlFor="password-confirm" className='label'>Confirm Password</label>
                             <input
                                 id='password-confirm'
