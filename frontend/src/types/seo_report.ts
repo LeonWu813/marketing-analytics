@@ -26,3 +26,12 @@ export interface SeoReportResponse {
     tbtMilliseconds: string
     runWarnings: string[]
 }
+
+export function formatDate(date: string) {
+    const dateSplit: string[] = date.split("T")
+    const time: string[] = dateSplit[1].split(":")
+    const hour: number = Number(time[0])
+    return dateSplit[0] + " • " +
+        (hour > 12 ? hour - 12 : hour) + ":" +
+        time[1] + (hour > 12 ? " PM" : " AM")
+}

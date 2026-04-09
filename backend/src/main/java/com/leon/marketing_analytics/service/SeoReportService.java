@@ -8,6 +8,7 @@ import com.leon.marketing_analytics.entity.SeoReport;
 import com.leon.marketing_analytics.entity.Site;
 import com.leon.marketing_analytics.entity.User;
 import com.leon.marketing_analytics.exception.ForbiddenException;
+import com.leon.marketing_analytics.exception.ResourceNotFoundException;
 import com.leon.marketing_analytics.repository.SeoReportRepository;
 import com.leon.marketing_analytics.repository.SiteRepository;
 import lombok.RequiredArgsConstructor;
@@ -107,5 +108,15 @@ public class SeoReportService {
         return reports.map(this::toResponse);
     }
 
+    @Transactional
+    public SeoReportResponse getReport(String siteCode, Long id, User user){
+        checkSiteOwnership(siteCode, user);
+
+        SeoReport report = seoReportRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Report not found")
+        );
+
+        return toResponse(report);
+    }
 
 }

@@ -19,7 +19,6 @@ export default function SeoPage() {
     const [targetUrl, setTargetUrl] = useState<string>("")
     const [targetKeyword, setTargetKeyword] = useState<string>("")
 
-
     useEffect(() => {
         if (!siteCode) {
             navigate('/app/404'); return
@@ -37,7 +36,7 @@ export default function SeoPage() {
     const newSeoAudit = async (e: React.SyntheticEvent) => {
         await createReport({
             analyzedUrl: targetUrl,
-            keyword: targetUrl,
+            keyword: targetKeyword,
             isFollowUp: false,
         }, siteCode)
     }
@@ -72,6 +71,7 @@ export default function SeoPage() {
                                 placeholder="https://example.domain.com"
                                 type="url"
                                 className="input"
+                                autoComplete="on"
                                 onChange={(e) => setTargetUrl(e.target.value)} />
                         </div>
                         <div className="form-field-container">

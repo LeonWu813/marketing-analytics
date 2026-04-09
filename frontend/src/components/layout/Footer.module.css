@@ -8,6 +8,7 @@ footer>div {
     align-items: center;
     justify-content: space-between;
     max-width: var(--max-content);
+    margin: auto;
 }
 
 .footerName {

@@ -41,4 +41,13 @@ public class SeoController {
     ) {
         return ResponseEntity.ok(seoReportService.getReports(site_code, analyzedUrl, pageable, currentUser));
     }
+
+    @GetMapping("/reports/{id}")
+    public ResponseEntity<SeoReportResponse> getSingle(
+            @PathVariable String site_code,
+            @PathVariable Long id,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.ok(seoReportService.getReport(site_code, id, currentUser));
+    }
 }

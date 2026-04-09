@@ -70,12 +70,13 @@ public class PageSpeedService {
         if (metricRoot.isMissingNode()) return "N/A";
 
         double value = metricRoot.path("numericValue").asDouble();
-        String unit  = metricRoot.path("numericUnit").asText();
+        String unitFull = metricRoot.path("numericUnit").asText();
+        String unit = !unitFull.equals("millisecond") ? (unitFull.equals("second") ? "s" : unitFull) : "ms";
 
         return String.format("%.1f %s", value, unit);
     }
 
-    private List<String> getWarning(JsonNode root){
+    private List<String> getWarning(JsonNode root) {
         JsonNode runWarnings = root.path("lighthouseResult").path("runWarnings");
         List<String> warningsList = new ArrayList<>();
         if (runWarnings.isArray()) {

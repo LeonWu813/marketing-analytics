@@ -1,19 +1,10 @@
 import { useEffect, useState } from "react"
-import type { SeoReportResponse } from "../../types/seo_report"
+import { formatDate, type SeoReportResponse } from "../../types/seo_report"
 import styles from "../common/ReportPreview.module.css"
 import { useNavigate } from "react-router-dom"
 
 interface Props {
     report: SeoReportResponse
-}
-
-function formatDate(date: string) {
-    const dateSplit: string[] = date.split("T")
-    const time: string[] = dateSplit[1].split(":")
-    const hour: number = Number(time[0])
-    return dateSplit[0] + " • " +
-        (hour > 12 ? hour - 12 : hour) + ":" +
-        time[1] + (hour > 12 ? " PM" : " AM")
 }
 
 export default function ReportPreview({ report }: Props) {
