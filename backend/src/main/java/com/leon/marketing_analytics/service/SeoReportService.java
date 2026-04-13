@@ -35,6 +35,8 @@ public class SeoReportService {
                 report.getSite().getSiteCode(),
                 report.getAnalyzedUrl(),
                 report.getKeyword(),
+                report.getTitle(),
+                report.getMetaDescription(),
                 report.getAnalyzedAt(),
                 report.getChecks().stream()
                         .map(c -> new SeoCheckResult(c.getCheckName(), c.getCheckStatus(), c.getDetails()))
@@ -44,6 +46,9 @@ public class SeoReportService {
                 report.getLcpSeconds(),
                 report.getFcpSeconds(),
                 report.getTbtMilliseconds(),
+                report.getLoadingExperience(),
+                report.getSeoAudits(),
+                report.getOpportunities(),
                 report.getRunWarnings()
         );
     }
@@ -78,12 +83,17 @@ public class SeoReportService {
                 .map(c -> seoCheckResultToSeoCheck(c, report)).toList();
         PageSpeedResult pageSpeedInsight = pageSpeedService.analyze(analyzedUrl);
 
+        report.setTitle(jsoupScraperService.getPageTitle());
+        report.setMetaDescription(jsoupScraperService.getPageMetaDescription());
         report.setChecks(checks);
         report.setPerformanceScore(pageSpeedInsight.performanceScore());
         report.setSeoScore(pageSpeedInsight.seoScore());
         report.setLcpSeconds(pageSpeedInsight.lcpSeconds());
         report.setFcpSeconds(pageSpeedInsight.fcpSeconds());
         report.setTbtMilliseconds(pageSpeedInsight.tbtMilliseconds());
+        report.setLoadingExperience(pageSpeedInsight.loadingExperience());
+        report.setSeoAudits(pageSpeedInsight.seoAudits());
+        report.setOpportunities(pageSpeedInsight.opportunities());
         report.setRunWarnings(pageSpeedInsight.warnings());
         report.setPagespeedRaw(pageSpeedInsight.rawResponse());
 
@@ -109,7 +119,7 @@ public class SeoReportService {
     }
 
     @Transactional
-    public SeoReportResponse getReport(String siteCode, Long id, User user){
+    public SeoReportResponse getReport(String siteCode, Long id, User user) {
         checkSiteOwnership(siteCode, user);
 
         SeoReport report = seoReportRepository.findById(id).orElseThrow(() ->

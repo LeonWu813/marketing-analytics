@@ -46,7 +46,7 @@ public class DataSeeder implements CommandLineRunner {
             return;
         }
 
-        String[] eventTypes = {"Visit", "Button Click", "Form Submission"};
+        String[] eventTypes = {"PAGE_VIEW", "CLICK", "FORM_SUBMIT"};
         String[] pageUrls = {"/", "/blog", "/product"};
         CampaignChannel[] channels = {CampaignChannel.ORGANIC, CampaignChannel.EMAIL, CampaignChannel.DIRECT};
         List<Event> batch = new ArrayList<>();

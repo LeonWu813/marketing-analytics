@@ -10,6 +10,9 @@ public record PageSpeedResult(
         String lcpSeconds,          // Largest Contentful Paint in seconds
         String fcpSeconds,          // First Contentful Paint in seconds
         String tbtMilliseconds,     // Total Blocking Time in milliseconds
+        String loadingExperience,
+        List<Map<String, Object>> seoAudits,
+        List<Map<String, Object>> opportunities,
         List<String> warnings
 ) {
 }

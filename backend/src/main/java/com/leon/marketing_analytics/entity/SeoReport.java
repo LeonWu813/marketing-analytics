@@ -36,6 +36,10 @@ public class SeoReport {
 
     private String keyword;
 
+    private String title;
+
+    private String metaDescription;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime analyzedAt;
@@ -65,6 +69,17 @@ public class SeoReport {
 
     @Column
     private String tbtMilliseconds;
+
+    @Column
+    private String loadingExperience;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private List<Map<String, Object>> seoAudits;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private List<Map<String, Object>> opportunities;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")

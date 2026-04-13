@@ -10,31 +10,30 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query("SELECT e FROM Event e " +
-            "WHERE e.site.siteCode = :siteCode " +
-            "AND (:campaignId IS NULL OR e.campaign.id = :campaignId) " +
-            "AND (:eventType IS NULL OR e.eventType = :eventType) " +
-            "AND (:channel IS NULL OR e.channel = :channel) " +
-            "AND (:utmSource IS NULL OR e.utmSource = :utmSource) " +
-            "AND (:utmMedium IS NULL OR e.utmMedium = :utmMedium) " +
-            "AND (:country IS NULL OR e.country = :country) " +
-            "AND (:startDate IS NULL OR e.createdAt >= :startDate) " +
-            "AND (:endDate IS NULL OR e.createdAt <= :endDate) " +
-            "ORDER BY e.createdAt DESC")
-    Page<Event> findBySiteWithFilters(
+    @Query(value = "SELECT e.* FROM events e " +
+            "JOIN sites s ON s.id = e.site_id " +
+            "WHERE s.site_code = :siteCode " +
+            "AND (CAST(:eventType AS text) IS NULL OR e.event_type = CAST(:eventType AS text)) " +
+            "AND (CAST(:channel AS text) IS NULL OR e.channel = CAST(:channel AS text)) " +
+            "AND (CAST(:utmSource AS text) IS NULL OR e.utm_source = CAST(:utmSource AS text)) " +
+            "AND (CAST(:utmMedium AS text) IS NULL OR e.utm_medium = CAST(:utmMedium AS text)) " +
+            "AND (CAST(:country AS text) IS NULL OR e.country = CAST(:country AS text)) " +
+            "AND (CAST(:startDate AS timestamp) IS NULL OR e.created_at >= CAST(:startDate AS timestamp)) " +
+            "AND (CAST(:endDate AS timestamp) IS NULL OR e.created_at <= CAST(:endDate AS timestamp)) " +
+            "ORDER BY e.created_at DESC", nativeQuery = true)
+    ArrayList<Event> findBySiteWithFilters(
             @Param("siteCode") String siteCode,
-            @Param("campaignId") Long campaignId,
             @Param("eventType") String eventType,
             @Param("channel") CampaignChannel channel,
             @Param("utmSource") String utmSource,
             @Param("utmMedium") String utmMedium,
             @Param("country") String country,
             @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
-            Pageable pageable
+            @Param("endDate") LocalDateTime endDate
     );
 
     Page<Event> findBySite(Site site, Pageable pageable);

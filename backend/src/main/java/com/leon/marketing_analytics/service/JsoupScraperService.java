@@ -3,6 +3,7 @@ package com.leon.marketing_analytics.service;
 import com.leon.marketing_analytics.dto.SeoCheckResult;
 import com.leon.marketing_analytics.entity.CheckStatus;
 import com.leon.marketing_analytics.exception.SeoAnalysisException;
+import lombok.Getter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,8 +17,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Getter
 @Service
 public class JsoupScraperService {
+
+    private String pageTitle;
+    private String pageMetaDescription;
 
     private List<SeoCheckResult> passedCheck(List<SeoCheckResult> result, String checkName) {
         if (result.isEmpty()) {
@@ -53,14 +58,16 @@ public class JsoupScraperService {
         List<SeoCheckResult> checks = new ArrayList<>();
         String checkName = "Meta description";
         if (metaDescription == null || metaDescription.attr("content").isBlank()) {
+            pageMetaDescription = "<empty>";
             checks.add(new SeoCheckResult(checkName, CheckStatus.FAIL,
                     checkName + " missing"));
         } else {
-            if (metaDescription.attr("content").length() > 155) {
+            pageMetaDescription = metaDescription.attr("content");
+            if (pageMetaDescription.length() > 155) {
                 checks.add(new SeoCheckResult(checkName, CheckStatus.WARN,
                         checkName + " too long. Suggest length: 120-155 characters"));
             }
-            if (!keyword.isBlank() && !metaDescription.attr("content").toLowerCase().contains(keyword)) {
+            if (!keyword.isBlank() && !pageMetaDescription.toLowerCase().contains(keyword)) {
                 checks.add(new SeoCheckResult(checkName, CheckStatus.WARN,
                         checkName + " missing keyword " + keyword));
             }
@@ -163,6 +170,7 @@ public class JsoupScraperService {
 
         keyword = (keyword != null) ? keyword.toLowerCase().trim() : "";
         String title = doc.title();
+        pageTitle = title;
         Element metaDescription = doc.selectFirst("meta[name=description]");
         Elements h1s = doc.select("h1");
         Elements headings = doc.select("h1, h2, h3, h4, h5, h6");

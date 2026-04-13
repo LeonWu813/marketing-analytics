@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class PageSpeedService {
         try {
             String json = restClient.get()
                     .uri("https://www.googleapis.com/pagespeedonline/v5/runPagespeed" +
-                            "?url={url}&strategy=mobile&key={key}", url, key)
+                            "?url={url}&strategy=mobile&key={key}&category=performance&category=seo", url, key)
                     .retrieve()
                     .body(String.class);
 
@@ -42,9 +43,13 @@ public class PageSpeedService {
             String lcpScore = getMetricsWithUnit(root, "largest-contentful-paint");
             String fcpScore = getMetricsWithUnit(root, "first-contentful-paint");
             String tbtScore = getMetricsWithUnit(root, "total-blocking-time");
+            String loadingExperience = getLoadingExperience(root);
+            List<Map<String, Object>> seoAudits = getSeoAudits(root);
+            List<Map<String, Object>> opportunities = getOpportunities(root);
             List<String> warnings = getWarning(root);
 
-            return new PageSpeedResult(rawResponse, performanceScore, seoScore, lcpScore, fcpScore, tbtScore, warnings);
+            return new PageSpeedResult(rawResponse, performanceScore, seoScore, lcpScore, fcpScore, tbtScore,
+                    loadingExperience, seoAudits, opportunities, warnings);
         } catch (Exception e) {
             return failedResult();
         }
@@ -89,6 +94,117 @@ public class PageSpeedService {
 
     private PageSpeedResult failedResult() {
         return new PageSpeedResult(null, -1, -1,
-                "N/A", "N/A", "N/A", List.of());
+                "N/A", "N/A", "N/A", "N/A",
+                null, null, List.of());
+    }
+
+    private String getLoadingExperience(JsonNode root) {
+        JsonNode loadingExperience = root
+                .path("loadingExperience")
+                .path("overall_category");
+        if (loadingExperience.isMissingNode()) {
+            return "N/A";
+        } else {
+            String res = loadingExperience.toString();
+            return res.substring(1, res.length() - 1).toLowerCase();
+        }
+    }
+
+    private List<Map<String, Object>> getSeoAudits(JsonNode root) {
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        JsonNode auditRefs = root
+                .path("lighthouseResult")
+                .path("categories")
+                .path("seo")
+                .path("auditRefs");
+
+        if (!auditRefs.isArray()) return results;
+
+        for (JsonNode ref : auditRefs) {
+            String auditId = ref.path("id").asText();
+            JsonNode audit = root
+                    .path("lighthouseResult")
+                    .path("audits")
+                    .path(auditId);
+
+            if (audit.isMissingNode()) continue;
+
+            double score = audit.path("score").asDouble(-1);
+            String title = audit.path("title").asText("N/A");
+            String displayValue = audit.path("displayValue").asText("");
+            String scoreDisplayMode = audit.path("scoreDisplayMode").asText("");
+
+            if (scoreDisplayMode.equals("notApplicable") ||
+                    scoreDisplayMode.equals("informative")) continue;
+
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("id", auditId);
+            entry.put("title", title);
+            entry.put("passed", score == 1.0);
+            entry.put("score", score);
+            entry.put("displayValue", displayValue);
+
+            results.add(entry);
+        }
+        return results;
+    }
+
+    private List<Map<String, Object>> getOpportunities(JsonNode root) {
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        JsonNode audits = root.path("lighthouseResult").path("audits");
+
+        audits.fields().forEachRemaining(entry -> {
+            JsonNode audit = entry.getValue();
+            JsonNode details = audit.path("details");
+
+            String detailsType = details.path("type").asText("");
+            String scoreDisplayMode = audit.path("scoreDisplayMode").asText("");
+
+            // skip non-actionable modes
+            if (scoreDisplayMode.equals("notApplicable") ||
+                    scoreDisplayMode.equals("informative") ||
+                    scoreDisplayMode.equals("manual")) return;
+
+            // skip passing audits (score >= 0.9)
+            JsonNode scoreNode = audit.path("score");
+            if (scoreNode.isMissingNode() || scoreNode.isNull()) return;
+            double score = scoreNode.asDouble(1.0);
+            if (score >= 0.9) return;
+
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("id", entry.getKey());
+            item.put("title", audit.path("title").asText());
+            item.put("displayValue", audit.path("displayValue").asText(""));
+            item.put("score", score);
+            item.put("description", audit.path("description").asText(""));
+
+            if (detailsType.equals("opportunity")) {
+                // red triangle — has concrete time savings
+                item.put("type", "opportunity");
+                item.put("savingsMs", details.path("overallSavingsMs").asDouble(0));
+                item.put("savingsBytes", details.path("overallSavingsBytes").asDouble(0));
+            } else {
+                // orange square — diagnostic, no time savings estimate
+                item.put("type", "diagnostic");
+                item.put("savingsMs", 0);
+                item.put("savingsBytes", 0);
+            }
+
+            results.add(item);
+        });
+
+        // sort: opportunities first, then diagnostics, each group by score ascending
+        results.sort((a, b) -> {
+            String typeA = (String) a.get("type");
+            String typeB = (String) b.get("type");
+            if (!typeA.equals(typeB)) {
+                return typeA.equals("opportunity") ? -1 : 1;
+            }
+            return Double.compare((double) a.get("score"), (double) b.get("score"));
+        });
+
+        return results;
     }
 }

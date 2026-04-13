@@ -1,0 +1,152 @@
+.heroSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.siteCode {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.7px;
+    color: var(--color-text-gray);
+    margin-top: var(--text-gap-small);
+    font-family: var(--text-font-secondary);
+}
+
+.heroButtons {
+    display: flex;
+    gap: var(--gap-small);
+}
+
+.campaignBtn::before {
+    background-image: url("/src/assets/campaign.svg");
+}
+
+.reportBtn::before {
+    background-image: url("/src/assets/report.svg");
+}
+
+.dashboardSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-medium);
+}
+
+.topRow {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: var(--gap-medium);
+}
+
+.overviewCardContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+}
+
+.overviewCard {
+    background-color: white;
+    padding: 24px;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--text-gap-small);
+}
+
+.cardTitle {
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+    color: var(--color-dark);
+}
+
+.cardValue {
+    font-size: 48px;
+    line-height: 100%;
+    letter-spacing: -2.4px;
+    font-weight: 700;
+    color: var(--color-text-h);
+}
+
+.green {
+    color: var(--color-good);
+}
+
+.red {
+    color: var(--color-warning);
+}
+
+.cardCompare {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--color-text-gray);
+}
+
+.greenSvg {
+    fill: var(--color-good);
+}
+
+.redSvg {
+    fill: var(--color-warning);
+    transform: scaleY(-1);
+}
+
+.chatContainer {
+    background-color: white;
+    padding: 24px;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--text-gap-small);
+}
+
+.chatHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.charOptionContainer {
+    display: flex;
+    gap: var(--text-gap);
+}
+
+.charOption {
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    padding: 4px 12px;
+    background-color: white;
+    border: none;
+    border-radius: 12px;
+    color: var(--color-text-p);
+}
+
+.charOptionActive {
+    color: var(--color-text-h);
+    background-color: var(--color-light);
+}
+
+.dashboardCard {
+    padding: 24px;
+    border-radius: var(--radius-md);
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-medium);
+}
+
+.dashboardCardTitle {
+    color: var(--color-text-h);
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 700;
+}

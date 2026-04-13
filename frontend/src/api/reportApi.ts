@@ -1,4 +1,3 @@
-import { data } from "react-router-dom";
 import type { PageResponse } from "../types/common";
 import type { ReportSendRequest, ReportSendResponse } from "../types/report_sent";
 import type { SeoReportRequest, SeoReportResponse } from "../types/seo_report";

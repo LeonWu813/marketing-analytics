@@ -8,15 +8,13 @@ import com.leon.marketing_analytics.service.EventService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/events")
@@ -33,9 +31,8 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EventResponse>> getEvents(
+    public ResponseEntity<ArrayList<EventResponse>> getEvents(
             @RequestParam String siteCode,
-            @RequestParam(required = false) Long campaignId,
             @RequestParam(required = false) String eventType,
             @RequestParam(required = false) CampaignChannel channel,
             @RequestParam(required = false) String utmSource,
@@ -43,10 +40,9 @@ public class EventController {
             @RequestParam(required = false) String country,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            @PageableDefault(size = 50, sort = "createdAt") Pageable pageable,
             @AuthenticationPrincipal User currentUser) {
         return ResponseEntity.ok(eventservice
-                .getEvents(siteCode, campaignId, eventType, channel,
-                        utmSource, utmMedium, country, startDate, endDate, pageable, currentUser));
+                .getEvents(siteCode, eventType, channel,
+                        utmSource, utmMedium, country, startDate, endDate, currentUser));
     }
 }

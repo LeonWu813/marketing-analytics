@@ -1,5 +1,24 @@
 export type CheckStatus = "PASS" | "WARN" | "FAIL"
 
+export interface SeoAudit {
+    id: string
+    title: string
+    passed: boolean
+    score: number
+    displayValue: string
+}
+
+export interface Opportunity {
+    id: string
+    title: string
+    displayValue: string
+    score: number
+    type: "opportunity" | "diagnostic"
+    savingsMs: number
+    savingsBytes: number
+    description: string
+}
+
 export interface SeoCheckResult {
     checkName: string
     checkStatus: CheckStatus
@@ -17,6 +36,8 @@ export interface SeoReportResponse {
     siteCode: string
     analyzedUrl: string
     keyword?: string
+    title: string
+    metaDescription: string
     analyzedAt: string
     checks: SeoCheckResult[]
     performanceScore: number
@@ -24,6 +45,9 @@ export interface SeoReportResponse {
     lcpSeconds: string
     fcpSeconds: string
     tbtMilliseconds: string
+    loadingExperience: string
+    seoAudits: SeoAudit[]
+    opportunities: Opportunity[]
     runWarnings: string[]
 }
 

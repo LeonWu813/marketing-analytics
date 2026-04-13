@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class EventService {
     private final CampaignRepository campaignRepository;
     private final GeoIpService geoIpService;
 
-    private CampaignChannel categorizeChannel(String utmMedium){
+    private CampaignChannel categorizeChannel(String utmMedium) {
         if (utmMedium == null) return CampaignChannel.OTHER;
         return switch (utmMedium.toLowerCase()) {
             case "organic" -> CampaignChannel.ORGANIC;
@@ -39,7 +40,7 @@ public class EventService {
         };
     }
 
-    private EventResponse toResponse(Event event){
+    private EventResponse toResponse(Event event) {
         return new EventResponse(
                 event.getId(),
                 event.getEventType(),
@@ -56,13 +57,13 @@ public class EventService {
         );
     }
 
-    private Site getSite(String siteCode){
-        return siteRepository.findBySiteCode(siteCode).orElseThrow(()->
+    private Site getSite(String siteCode) {
+        return siteRepository.findBySiteCode(siteCode).orElseThrow(() ->
                 new ResourceNotFoundException("Site not found."));
     }
 
     @Transactional
-    public EventResponse createEvent(EventIngestRequest request, String ipAddress){
+    public EventResponse createEvent(EventIngestRequest request, String ipAddress) {
         Site site = getSite(request.siteCode());
 
         Campaign campaign = (request.campaignId() != null)
@@ -89,29 +90,27 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public Page<EventResponse> getEvents(String siteCode,
-                                         Long campaignId,
-                                         String eventType,
-                                         CampaignChannel channel,
-                                         String utmSource,
-                                         String utmMedium,
-                                         String country,
-                                         LocalDate startDate,
-                                         LocalDate endDate,
-                                         Pageable pageable,
-                                         User currentUser){
+    public ArrayList<EventResponse> getEvents(String siteCode,
+                                              String eventType,
+                                              CampaignChannel channel,
+                                              String utmSource,
+                                              String utmMedium,
+                                              String country,
+                                              LocalDate startDate,
+                                              LocalDate endDate,
+                                              User currentUser) {
         Site site = getSite(siteCode);
         if (!site.getUser().getId().equals(currentUser.getId())) {
             throw new ForbiddenException("Access forbidden");
         }
 
         LocalDateTime start = startDate != null ? startDate.atStartOfDay() : null;
-        LocalDateTime end   = endDate   != null ? endDate.atTime(LocalTime.MAX) : null;
+        LocalDateTime end = endDate != null ? endDate.atTime(LocalTime.MAX) : null;
 
 
-        Page<Event> events = eventRepository.findBySiteWithFilters(site.getSiteCode(),
-                campaignId, eventType, channel, utmSource, utmMedium, country, start, end, pageable);
+        ArrayList<Event> events = eventRepository.findBySiteWithFilters(site.getSiteCode(),
+                eventType, channel, utmSource, utmMedium, country, start, end);
 
-        return events.map(this::toResponse);
+        return new ArrayList<>(events.stream().map(this::toResponse).toList());
     }
 }
