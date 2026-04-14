@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { formatDate, type SeoReportResponse } from "../../types/seo_report"
 import styles from "../common/ReportPreview.module.css"
 import { useNavigate } from "react-router-dom"

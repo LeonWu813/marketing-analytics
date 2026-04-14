@@ -38,6 +38,11 @@
     gap: var(--gap-medium);
 }
 
+.filters {
+    display: flex;
+    gap: var(--gap-small);
+}
+
 .topRow {
     display: grid;
     grid-template-columns: 1fr 3fr;
@@ -48,54 +53,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--gap-small);
-}
-
-.overviewCard {
-    background-color: white;
-    padding: 24px;
-    border-radius: var(--radius-md);
-    display: flex;
-    flex-direction: column;
-    gap: var(--text-gap-small);
-}
-
-.cardTitle {
-    font-size: 12px;
-    line-height: 16px;
-    letter-spacing: 1.2px;
-    font-weight: 700;
-    color: var(--color-dark);
-}
-
-.cardValue {
-    font-size: 48px;
-    line-height: 100%;
-    letter-spacing: -2.4px;
-    font-weight: 700;
-    color: var(--color-text-h);
-}
-
-.green {
-    color: var(--color-good);
-}
-
-.red {
-    color: var(--color-warning);
-}
-
-.cardCompare {
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--color-text-gray);
-}
-
-.greenSvg {
-    fill: var(--color-good);
-}
-
-.redSvg {
-    fill: var(--color-warning);
-    transform: scaleY(-1);
 }
 
 .chatContainer {
@@ -135,18 +92,145 @@
     background-color: var(--color-light);
 }
 
-.dashboardCard {
-    padding: 24px;
-    border-radius: var(--radius-md);
+.previewSection {
+    display: flex;
+    gap: var(--gap-medium);
+}
+
+.previewContainer {
+    padding: 32px;
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-medium);
+    width: 100%;
+    border-radius: var(--radius-md);
+}
+
+.previewHeader {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.previewHeader>div {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    border-radius: var(--radius-sm);
+}
+
+.campaignIcon {
+    background-color: #E5EDF9;
+    background-image: url("../assets/campaign-blue.svg");
+}
+
+.reportIcon {
+    background-color: #E5EFEC;
+    background-image: url("../assets/report-green.svg");
+}
+
+.viewAll {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--color-text-h);
+}
+
+.newCampaign::before {
+    background-image: url("../assets/plus.svg");
+}
+
+.newReport::before {
+    background-image: url("../assets/report.svg");
+}
+
+.campaignContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--text-gap);
+}
+
+.campaignPreview {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-background);
+    border-radius: var(--radius-sm);
+}
+
+.reportContainer {
+    padding: 24px;
+    background-color: var(--color-background);
+    border-radius: var(--radius-sm);
     display: flex;
     flex-direction: column;
     gap: var(--gap-medium);
 }
 
-.dashboardCardTitle {
+.reportDetail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--text-gap-small);
+}
+
+.reportLabel {
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    line-height: 16px;
+    color: var(--color-text-gray);
+    font-weight: 600;
+}
+
+.reportUrl {
     color: var(--color-text-h);
     font-size: 18px;
-    line-height: 28px;
+    line-height: 24px;
     font-weight: 700;
+}
+
+.reportAt {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.scoreContainer {
+    display: flex;
+    gap: var(--gap-medium);
+}
+
+.scoreContainer>div {
+    display: flex;
+    width: 100%;
+    padding: 24px;
+    border-radius: var(--radius-md);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #F2F4F6;
+}
+
+.score {
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 700;
+}
+
+.green {
+    color: var(--color-good);
+}
+
+.blue {
+    color: var(--color-primary);
 }

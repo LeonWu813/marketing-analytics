@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import type { SiteResponse } from "../types/site";
 import { getSite } from "../api/siteApi";
 import Breadcrumb from "../components/common/Breadcrumb";
@@ -8,6 +8,7 @@ import CreateCampaignPannel from "../components/common/CreateCampaignPannel";
 import type { CampaignChannel, CampaignResponse, CampaignStatus } from "../types/campaign";
 import { getCampaigns } from "../api/campaignApi";
 import CampaignTable from "../components/common/CampaignTable";
+import Filter from "../components/common/Filter";
 
 const STATUS_FILTERS: { label: string; value: CampaignStatus | undefined }[] = [
     { label: 'All', value: undefined },
@@ -29,17 +30,19 @@ const STATUS_CHANNEL: { label: string; value: CampaignChannel | undefined }[] = 
 
 export default function CampaignsPage() {
     const navigate = useNavigate()
+    const location = useLocation()
 
     const { siteCode } = useParams<{ siteCode: string }>();
     const [site, setSite] = useState<SiteResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const [createSitePannel, setCreateSitePannel] = useState<boolean>(false);
+    const [createSitePannel, setCreateSitePannel] = useState<boolean>(
+        location.state?.openCreate ?? false
+    )
     const [campaigns, setCampaigns] = useState<CampaignResponse[]>([])
     const [haveCampaigns, setHaveCampaigns] = useState<boolean>(true)
     const [selectedStatus, setSelectedStatus] = useState<CampaignStatus | undefined>(undefined)
     const [selectedChannel, setSelectedChannel] = useState<CampaignChannel | undefined>(undefined)
-    const [channelFilterOpen, setChannelFilterOpen] = useState<boolean>(false)
 
     async function refreshCampaigns(status?: CampaignStatus, channel?: CampaignChannel) {
         if (!siteCode) return
@@ -83,7 +86,6 @@ export default function CampaignsPage() {
     function handelChannelFilter(channel: CampaignChannel | undefined) {
         setSelectedChannel(channel)
         refreshCampaigns(selectedStatus, channel)
-        setChannelFilterOpen(!channelFilterOpen)
     }
 
     return <>
@@ -119,23 +121,12 @@ export default function CampaignsPage() {
                     </button>
                 ))}
             </div>
-            <div className={styles.dropdownContainer}>
-                <button
-                    className={styles.channelFilter}
-                    onClick={() => setChannelFilterOpen(!channelFilterOpen)}>
-                    Channel: {selectedChannel ? selectedChannel : "All"}
-                </button>
-                <div className={styles.dropdown}>
-                    {channelFilterOpen && STATUS_CHANNEL.map(filter => (
-                        <button
-                            key={filter.label}
-                            onClick={() => handelChannelFilter(filter.value)}
-                        >
-                            {filter.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            <Filter
+                label="Channel"
+                options={STATUS_CHANNEL}
+                onSelect={(value) => handelChannelFilter(value)}
+                large={true}
+            />
         </section>
         {haveCampaigns ?
             <CampaignTable campaigns={campaigns} siteCode={siteCode} refresh={() => refreshCampaigns()} /> :

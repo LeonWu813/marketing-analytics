@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import type { SeoReportResponse } from "../types/seo_report";
 import { createReport, getReports } from "../api/reportApi";
 import Breadcrumb from "../components/common/Breadcrumb";
@@ -10,12 +10,16 @@ import ReportPreview from "../components/common/ReportPreview";
 
 export default function SeoPage() {
     const navigate = useNavigate()
+    const location = useLocation()
+
     const { siteCode } = useParams<{ siteCode: string }>();
     const [site, setSite] = useState<SiteResponse | null>(null)
     const [reports, setReports] = useState<SeoReportResponse[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const [createSeoPannel, setCreateSeoPannel] = useState(false)
+    const [createSeoPannel, setCreateSeoPannel] = useState<boolean>(
+        location.state?.openCreate ?? false
+    )
     const [targetUrl, setTargetUrl] = useState<string>("")
     const [targetKeyword, setTargetKeyword] = useState<string>("")
 

@@ -6,16 +6,44 @@ import Breadcrumb from "../components/common/Breadcrumb"
 import styles from "./SingleSitePage.module.css"
 import { getEvents } from "../api/eventApi"
 import type { EventResponse } from "../types/event"
-import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import DashboardOverview from "../components/common/DashboardOverview"
+import Chart from "../components/common/Chart"
+import DashboardCard from "../components/common/DashboardCard"
+import type { CampaignChannel, CampaignResponse } from "../types/campaign"
+import Filter from "../components/common/Filter"
+import { getReports } from "../api/reportApi"
+import type { SeoReportResponse } from "../types/seo_report"
+import { getCampaigns } from "../api/campaignApi"
+
+const STATUS_CHANNEL: { label: string; value: CampaignChannel | undefined }[] = [
+    { label: 'All', value: undefined },
+    { label: 'Organic', value: 'ORGANIC' },
+    { label: 'Paid', value: 'PAID' },
+    { label: 'Social', value: 'SOCIAL' },
+    { label: 'Email', value: 'EMAIL' },
+    { label: 'Event', value: 'EVENT' },
+    { label: 'Direct', value: 'DIRECT' },
+    { label: 'OTHER', value: 'OTHER' },
+]
+
+const EVENT_TYPE: { label: string; value: string }[] = [
+    { label: 'page view', value: 'PAGE_VIEW' },
+    { label: 'click', value: 'CLICK' },
+    { label: 'form submit', value: 'FORM_SUBMIT' }
+]
 
 export default function SingleSitePage() {
     const navigate = useNavigate()
     const { siteCode } = useParams<{ siteCode: string }>();
     const [site, setSite] = useState<SiteResponse | null>(null)
     const [events, setEvents] = useState<EventResponse[]>([])
-    const [chartDisplay, setChartDisplay] = useState<"month" | "day">("day")
+    const [dateRange, setDateRange] = useState<"3M" | "1M">("1M")
+    const [channel, setChannel] = useState<CampaignChannel | undefined>(undefined)
+    const [eventType, setEventType] = useState<string>("PAGE_VIEW")
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [report, setReport] = useState<SeoReportResponse | null>(null)
+    const [campaigns, setCampaigns] = useState<CampaignResponse[]>([])
 
     useEffect(() => {
         if (!siteCode) { navigate('/app/404'); return }
@@ -28,11 +56,15 @@ export default function SingleSitePage() {
 
         Promise.all([
             getSite(siteCode),
-            getEvents(siteCode, undefined, undefined, undefined, undefined, undefined, startDate)
+            getEvents(siteCode, undefined, undefined, undefined, undefined, undefined, startDate),
+            getReports(siteCode),
+            getCampaigns(siteCode)
         ])
-            .then(([siteData, eventData]) => {
+            .then(([siteData, eventData, reportData, campaignData]) => {
                 setSite(siteData)
                 setEvents(eventData)
+                setReport(reportData.content[0])
+                setCampaigns(campaignData.content.slice(0, 3))
             })
             .catch(() => setError('Failed to load data'))
             .finally(() => setLoading(false))
@@ -42,59 +74,19 @@ export default function SingleSitePage() {
     if (error) return <p style={{ color: 'red' }}>{error}</p>
     if (!site) return null
 
-    const chartDataSixMonthByMonth = events.reduce((acc, event) => {
-        const date = event.createdAt.substring(0, 7)
-        const existing = acc.find(d => d.date.substring(0, 7) === date)
-        if (existing) {
-            existing.count++
-        } else {
-            acc.push({ date, count: 1 })
-        }
-        return acc
-    }, [] as { date: string; count: number }[])
-        .sort((a, b) => a.date.localeCompare(b.date))
+    function handelChannelFilter(channel: CampaignChannel | undefined) {
+        setChannel(channel)
+    }
 
-    const now = new Date()
-    const thisMonthNum = now.getMonth()
-    const lastMonthNum = now.getMonth() - 1
-    const thisYear = now.getFullYear()
-    const lastMonthYear = lastMonthNum < 0 ? thisYear - 1 : thisYear
-    const lastMonthAdj = lastMonthNum < 0 ? 11 : lastMonthNum
-
-    // get events for this month
-    const thisMonthEvents = events.filter(e => {
-        const d = new Date(e.createdAt)
-        return d.getMonth() === thisMonthNum && d.getFullYear() === thisYear
-    })
-
-    const thisMonthView = thisMonthEvents.filter(e => e.eventType === 'PAGE_VIEW').length
-
-    // get events for last month
-    const lastMonthEvents = events.filter(e => {
-        const d = new Date(e.createdAt)
-        return d.getMonth() === lastMonthAdj && d.getFullYear() === lastMonthYear
-    })
-
-    const lastMonthView = lastMonthEvents.filter(e => e.eventType === 'PAGE_VIEW').length
-
-    // get how many days last month had
-    const daysInLastMonth = new Date(lastMonthYear, lastMonthAdj + 1, 0).getDate()
-
-    // build one entry per day
-    const compareByDay = Array.from({ length: daysInLastMonth }, (_, i) => {
-        const day = i + 1
-        return {
-            day,
-            thisMonth: thisMonthEvents.filter(e => new Date(e.createdAt).getDate() === day && e.eventType === 'PAGE_VIEW').length,
-            lastMonth: lastMonthEvents.filter(e => new Date(e.createdAt).getDate() === day && e.eventType === 'PAGE_VIEW').length,
-        }
-    })
+    function handelEventTypeFilter(eventType: string) {
+        setEventType(eventType)
+    }
 
     return <>
         <section className={styles.heroSection}>
             <Breadcrumb
-                first={site.siteName}
-                second="Seo Reports"
+                first="Site"
+                second={site.siteName}
             />
             <div className={styles.titleContainer}>
                 <div>
@@ -114,94 +106,103 @@ export default function SingleSitePage() {
             </div>
         </section>
         <section className={styles.dashboardSection}>
+            <div className={styles.filters}>
+                <Filter
+                    label="Channel"
+                    options={STATUS_CHANNEL}
+                    onSelect={(value) => handelChannelFilter(value)}
+                    large={true}
+                />
+                <Filter
+                    label="Event Type"
+                    options={EVENT_TYPE}
+                    onSelect={(value) => handelEventTypeFilter(value ? value : "PAGE_VIEW")}
+                    large={true}
+                />
+            </div>
             <div className={styles.topRow}>
                 <div className={styles.overviewCardContainer}>
-                    <div className={styles.overviewCard}>
-                        <p className={styles.cardTitle}>Monthly Page Views</p>
-                        <p className={styles.cardValue}>{thisMonthView}</p>
-                        <p className={styles.cardCompare}>
-                            <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "4px" }} className={thisMonthView > lastMonthView ? styles.greenSvg : styles.redSvg}>
-                                <path d="M0.816667 7L0 6.18333L4.31667 1.8375L6.65 4.17083L9.68333 1.16667H8.16667V0H11.6667V3.5H10.5V1.98333L6.65 5.83333L4.31667 3.5L0.816667 7Z" />
-                            </svg>
-                            <span className={thisMonthView > lastMonthView ? styles.green : styles.red}>{Math.trunc(((thisMonthView - lastMonthView) / lastMonthView) * 100)}%</span> vs last month</p>
-                    </div>
-                    <div className={styles.overviewCard}>
-                        <p className={styles.cardTitle}>Monthly Page Events</p>
-                        <p className={styles.cardValue}>{thisMonthEvents.length}</p>
-                        <p className={styles.cardCompare}>
-                            <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "4px" }} className={thisMonthEvents.length > lastMonthEvents.length ? styles.greenSvg : styles.redSvg}>
-                                <path d="M0.816667 7L0 6.18333L4.31667 1.8375L6.65 4.17083L9.68333 1.16667H8.16667V0H11.6667V3.5H10.5V1.98333L6.65 5.83333L4.31667 3.5L0.816667 7Z" />
-                            </svg>
-                            <span className={thisMonthEvents.length > lastMonthEvents.length ? styles.green : styles.red}>{Math.trunc(((thisMonthEvents.length - lastMonthEvents.length) / lastMonthEvents.length) * 100)}%</span> vs last month</p>
-                    </div>
+                    <DashboardOverview events={events} title="All Event" eventType="ALL" dateRange={dateRange} channel={channel} />
+                    <DashboardOverview events={events} title={eventType} eventType={eventType} dateRange={dateRange} channel={channel} />
                 </div>
                 <div className={styles.chatContainer}>
                     <div className={styles.chatHeader}>
                         <p className={styles.dashboardCardTitle}>Events Over Time</p>
                         <div className={styles.charOptionContainer}>
                             <button
-                                className={`${styles.charOption} ${chartDisplay === "day" && styles.charOptionActive}`}
-                                onClick={() => setChartDisplay("day")}>
+                                className={`${styles.charOption} ${dateRange === "1M" && styles.charOptionActive}`}
+                                onClick={() => setDateRange("1M")}>
                                 30 Days
                             </button>
                             <button
-                                className={`${styles.charOption} ${chartDisplay === "month" && styles.charOptionActive}`}
-                                onClick={() => setChartDisplay("month")}>
-                                6 Months
+                                className={`${styles.charOption} ${dateRange === "3M" && styles.charOptionActive}`}
+                                onClick={() => setDateRange("3M")}>
+                                3 Months
 
                             </button>
                         </div>
                     </div>
-                    {chartDisplay === "month" ?
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={chartDataSixMonthByMonth}>
-                                <XAxis
-                                    dataKey="date"
-                                    tick={{ fontSize: 11 }}
-                                    tickFormatter={(date) => {
-                                        return new Date(date + '-01').toLocaleDateString('en-US', { month: 'short' })
-                                    }}
-                                />
-                                <YAxis hide />
-                                <Tooltip
-                                    formatter={(value) => [value, 'Events']}
-                                    labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                                />
-                                <Bar
-                                    dataKey="count"
-                                    fill="#0C52D2"
-                                    radius={[4, 4, 0, 0]}
-                                />
-                            </BarChart>
-                        </ResponsiveContainer> :
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={compareByDay} barGap={2}>
-                                <XAxis
-                                    dataKey="day"
-                                    tick={{ fontSize: 11 }}
-                                    tickFormatter={(day) => day % 5 === 0 ? day : ''}
-                                />
-                                <YAxis hide />
-                                <Tooltip
-                                    formatter={(value, name) => [
-                                        value,
-                                        name === 'thisMonth' ? 'This Month' : 'Last Month'
-                                    ]}
-                                    labelFormatter={(day) => `Day ${day}`}
-                                />
-                                <Legend
-                                    formatter={(value) => value === 'thisMonth' ? 'This Month' : 'Last Month'}
-                                />
-                                <Bar dataKey="lastMonth" fill="#D5E3FC" radius={[2, 2, 0, 0]} />
-                                <Bar dataKey="thisMonth" fill="#0C52D2" radius={[2, 2, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>}
+                    <Chart events={events} eventType={eventType} dateRange={dateRange} channel={channel} />
                 </div>
             </div>
             <div className="grid-3">
-                <div className={styles.dashboardCard}>
-                    <p className={styles.dashboardCardTitle}>Event Type Breakdown</p>
+                <DashboardCard events={events} attribute="pageUrl" eventType={eventType} dateRange={dateRange} channel={channel} />
+                <DashboardCard events={events} attribute="channel" eventType={eventType} dateRange={dateRange} channel={channel} />
+                <DashboardCard events={events} attribute="country" eventType={eventType} dateRange={dateRange} channel={channel} />
+            </div>
+        </section >
+        <section className={styles.previewSection}>
+            <div className={styles.previewContainer}>
+                <div className={styles.previewHeader}>
+                    <div>
+                        <div className={`${styles.icon} ${styles.campaignIcon}`}></div>
+                        <p className="titles">Recent Campaigns</p>
+                    </div>
+                    <div >
+                        <a href={`/app/${siteCode}/campaigns`} className={styles.viewAll}>View all</a>
+                        <button className={`button-primary button-small button-with-icon ${styles.newCampaign}`} onClick={() => navigate(`/app/${siteCode}/campaigns`, { state: { openCreate: true } })}>Create</button>
+                    </div>
                 </div>
+                <div className={styles.campaignContainer}>
+                    {campaigns.map(c => (
+                        <div key={c.id} className={styles.campaignPreview}>
+                            <p>{c.campaignName}</p>
+                            <p>{c.channel}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <div className={styles.previewContainer}>
+                <div className={styles.previewHeader}>
+                    <div>
+                        <div className={`${styles.icon} ${styles.reportIcon}`}></div>
+                        <p className="titles">SEO Performance</p>
+                    </div>
+                    <div>
+                        <a href={`/app/${siteCode}/seo/reports`} className={styles.viewAll}>All reports</a>
+                        <button className={`button-primary button-small button-with-icon ${styles.newReport}`} onClick={() => navigate(`/app/${siteCode}/seo/reports`, { state: { openCreate: true } })}>New Audit</button>
+                    </div>
+                </div>
+                {report ?
+                    <div className={styles.reportContainer}>
+                        <div className={styles.reportDetail}>
+                            <p className={styles.reportLabel}>LATEST AUDIT</p>
+                            <p className={styles.reportUrl}>{report.analyzedUrl}</p>
+                            <p className={styles.reportAt}>{report.analyzedAt}</p>
+                        </div>
+                        <div className={styles.scoreContainer}>
+                            <div>
+                                <p className={`${styles.score} ${styles.blue}`}>{report.seoScore}</p>
+                                <p className={styles.scoreType}>Seo Score</p>
+                            </div>
+                            <div>
+                                <p className={`${styles.score} ${styles.green}`}>{report.performanceScore}</p>
+                                <p className={styles.scoreType}>Performance</p>
+                            </div>
+                        </div>
+                    </div> :
+                    <div><p>No recent report</p></div>
+                }
             </div>
         </section>
     </>

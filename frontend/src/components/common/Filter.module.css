@@ -1,0 +1,70 @@
+.dropdownContainer {
+    position: relative;
+}
+
+.filter {
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 16px;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--text-gap);
+    align-items: center;
+    border: none;
+    width: 210px;
+}
+
+.filterBig {
+    padding: 16px;
+    width: 300px;
+}
+
+.filter::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background: url("/src/assets/filter.svg");
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.filter::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background: url("/src/assets/down.svg");
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+
+.dropdown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: 100%;
+    border: 1px solid var(--color-border);
+    z-index: 10;
+}
+
+.dropdown>button {
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 16px;
+    background-color: white;
+    display: flex;
+    gap: var(--text-gap);
+    align-items: center;
+    border: 0.5px solid var(--color-border);
+}
+
+.dropdownBig>button {
+    padding: 16px;
+}
+
+.dropdown>button:hover {
+    background-color: var(--color-container-bg);
+}

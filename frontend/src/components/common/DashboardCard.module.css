@@ -1,0 +1,46 @@
+.dashboardCard {
+    padding: 24px;
+    border-radius: var(--radius-md);
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+}
+
+.dashboardCardTitle {
+    color: var(--color-text-h);
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.rows {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+}
+
+.rows:first-child {
+    padding-bottom: 12px;
+}
+
+.rows:not(:first-child) {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.rows:last-child {
+    border: none;
+}
+
+.rows>p:last-child {
+    text-align: right;
+}
+
+.header {
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: 700;
+    color: var(--color-text-gray);
+    text-transform: uppercase;
+}
