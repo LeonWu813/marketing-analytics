@@ -10,6 +10,18 @@
     align-items: flex-end;
 }
 
+.codeContainer {
+    display: flex;
+    gap: var(--gap-small);
+}
+
+.codeContainer>button {
+    color: var(--color-text-p);
+    cursor: pointer;
+    background: var(--color-background);
+    border: none;
+}
+
 .siteCode {
     font-size: 14px;
     line-height: 20px;

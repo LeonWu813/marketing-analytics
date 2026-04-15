@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-import { getSites } from "../api/siteApi";
+import { createSite, getSites } from "../api/siteApi";
 import type { SiteResponse } from '../types/site'
 import styles from '../pages/SitesPage.module.css'
 import SiteCard from "../components/common/SiteCard";
+import SiteCreatedModal from "../components/common/SiteCreatedModal";
 
 export default function SitesPage() {
-    const [createSitePannel, setCreateSitePannel] = useState<boolean>(false)
     const [siteDomain, setSiteDomain] = useState<string>("")
+    const [siteName, setSiteName] = useState<string>("")
     const [sites, setSites] = useState<SiteResponse[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [submitting, setSubmitting] = useState(false)
+    const [createdSite, setCreatedSite] = useState<SiteResponse | null>(null)
 
     useEffect(() => {
         getSites().then(data => setSites(data))
@@ -17,30 +20,63 @@ export default function SitesPage() {
             .finally(() => setLoading(false))
     }, [])
 
+    async function handleCreateSite(e: React.SyntheticEvent) {
+        e.preventDefault()
+        setSubmitting(true)
+        try {
+            const site = await createSite({ siteName, siteDomain })
+            setCreatedSite(site)
+            const updated = await getSites()
+            setSites(updated)
+        } catch {
+            setError('Failed to create site')
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    function handleModalDone() {
+        setCreatedSite(null)
+        getSites().then(setSites)
+    }
 
     if (loading) return <p>Loading...</p>
     if (error) return <p style={{ color: 'red' }}>{error}</p>
 
-    return <>
+    return <>{createdSite &&
+        <SiteCreatedModal siteCode={createdSite.siteCode} siteName={createdSite.siteName} onDone={handleModalDone} />}
         <section className={styles.headingSection}>
             <h1>Sites</h1>
             <p>Manage your digital properties and track real-time marketing performance across your ecosystem.</p>
         </section>
         <section className={styles.newSiteSection}>
             <p className="titles">Register New Site</p>
-            <div className="form-field-container">
-                <label htmlFor="domain" className="label">
-                    Site Domain
-                </label>
-                <form onSubmit={() => setCreateSitePannel(true)} className={styles.newSiteForm}>
-                    <input id="domain"
-                        required
-                        placeholder="https://example.domain.com"
-                        type="url"
-                        className="input"
-                        onChange={(e) => setSiteDomain(e.target.value)} />
-                    <button className={`button-primary button-small button-with-icon ${styles.createSiteBtn}`} type="submit">
-                        Create Site
+            <div>
+                <form onSubmit={(e) => handleCreateSite(e)} className={styles.newSiteForm}>
+                    <div className="form-field-container">
+                        <label htmlFor="domain" className="label">
+                            Site Domain
+                        </label>
+                        <input id="domain"
+                            required
+                            placeholder="https://example.domain.com"
+                            type="url"
+                            className="input"
+                            onChange={(e) => setSiteDomain(e.target.value)} />
+                    </div>
+                    <div className="form-field-container">
+                        <label htmlFor="name" className="label">
+                            Site Name
+                        </label>
+                        <input id="name"
+                            required
+                            placeholder="Site Name"
+                            type="text"
+                            className="input"
+                            onChange={(e) => setSiteName(e.target.value)} />
+                    </div>
+                    <button className={`button-primary button-with-icon ${styles.createSiteBtn}`} disabled={submitting} type="submit">
+                        {submitting ? "Creating..." : "Create Site"}
                     </button>
                 </form>
             </div>
@@ -48,7 +84,7 @@ export default function SitesPage() {
         <section>
             <div className="grid-3">
                 {sites.map(site =>
-                    <SiteCard site={site} />)}
+                    <SiteCard site={site} key={site.siteId} />)}
             </div>
         </section>
         <section className={styles.scaleProfile}>

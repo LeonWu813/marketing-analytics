@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { formatDate, type SeoReportResponse } from "../types/seo_report"
 import { getSingleReport, sentReport } from "../api/reportApi"
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import styles from "./SingleSeoPage.module.css"
 import Breadcrumb from "../components/common/Breadcrumb";
 import type { SiteResponse } from "../types/site";
@@ -73,7 +73,7 @@ export default function SingleSeoPage() {
 
     return <>
         <section className={styles.heroSection}>
-            <a href={`/app/${siteCode}/seo/reports`} className={`link linkWithIcon ${styles.back}`}>Back to reports</a>
+            <Link to={`/app/${siteCode}/seo/reports`} className={`link linkWithIcon ${styles.back}`}>Back to reports</Link>
             <div className={styles.titleContainer}>
                 <div className={styles.titles}>
                     <Breadcrumb
@@ -160,7 +160,11 @@ export default function SingleSeoPage() {
                     <div>
                         <p>Description Length</p>
                         <p
-                            className={metaCheck(report.title) == "good" ? styles.good : metaCheck(report.title) == "optimal" ? styles.optimal : styles.bad}>
+                            className={metaCheck(report.metaDescription) == "good" ?
+                                styles.good :
+                                metaCheck(report.metaDescription) == "optimal" ?
+                                    styles.optimal :
+                                    styles.bad}>
                             {`${metaCheck(report.metaDescription)}${report.metaDescription == "<empty>" ? "" : ` (${report.metaDescription.length} chars)`}`}</p>
                     </div>
                 </div>
@@ -171,9 +175,9 @@ export default function SingleSeoPage() {
             <div className={`${styles.actionsContainer} ${styles.criticalFixed}`}>
                 <p className={styles.actionsTitle}>Critical Fixes</p>
                 {
-                    report.opportunities.map(opp =>
-                        opp.type == "opportunity" &&
-                        <div className={styles.actionItem}>
+                    report.opportunities
+                        .filter(opp => opp.type === "opportunity")
+                        .map(opp => <div key={opp.id} className={styles.actionItem}>
                             <img src={warning} alt="" width={24} height={24} style={{ marginTop: '4px' }} />
                             <div>
                                 <div className={styles.actionTitleContainer}>
@@ -184,12 +188,12 @@ export default function SingleSeoPage() {
                             </div>
                         </div>
 
-                    )
+                        )
                 }
                 {
-                    report.seoAudits.map(audit =>
-                        audit.score == 0 &&
-                        <div className={styles.actionItem}>
+                    report.seoAudits
+                        .filter(audit => audit.score === 0)
+                        .map(audit => <div key={audit.id} className={styles.actionItem}>
                             <img src={warning} alt="" width={24} height={24} />
                             <div>
                                 <div className={styles.actionTitleContainer}>
@@ -198,12 +202,12 @@ export default function SingleSeoPage() {
                             </div>
                         </div>
 
-                    )
+                        )
                 }
                 {
-                    report.checks.map(check =>
-                        check.checkStatus == "FAIL" &&
-                        <div className={styles.actionItem}>
+                    report.checks
+                        .filter(check => check.checkStatus === "FAIL")
+                        .map(check => <div key={check.checkName} className={styles.actionItem}>
                             <img src={warning} alt="" width={24} height={24} />
                             <div>
                                 <div className={styles.actionTitleContainer}>
@@ -213,15 +217,15 @@ export default function SingleSeoPage() {
                             </div>
                         </div>
 
-                    )
+                        )
                 }
             </div>
             <div className={`${styles.actionsContainer} ${styles.opportunities}`}>
                 <p className={styles.actionsTitle}>Opportunities</p>
                 {
-                    report.checks.map(check =>
-                        check.checkStatus == "WARN" &&
-                        <div className={styles.actionItem}>
+                    report.checks
+                        .filter(check => check.checkStatus === "WARN")
+                        .map(check => <div key={check.checkName} className={styles.actionItem}>
                             <img src={opportunity} alt="" width={24} height={24} />
                             <div>
                                 <div className={styles.actionTitleContainer}>
@@ -231,12 +235,12 @@ export default function SingleSeoPage() {
                             </div>
                         </div>
 
-                    )
+                        )
                 }
                 {
-                    report.opportunities.map(opp =>
-                        opp.type == "diagnostic" &&
-                        <div className={styles.actionItem}>
+                    report.opportunities
+                        .filter(opp => opp.type === "diagnostic")
+                        .map(opp => <div key={opp.id} className={styles.actionItem}>
                             <img src={opportunity} alt="" width={24} height={24} style={{ marginTop: '4px' }} />
                             <div>
                                 <div className={styles.actionTitleContainer}>
@@ -246,7 +250,7 @@ export default function SingleSeoPage() {
                             </div>
                         </div>
 
-                    )
+                        )
                 }
             </div>
         </section>

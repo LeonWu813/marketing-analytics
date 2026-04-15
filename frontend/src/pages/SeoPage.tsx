@@ -38,11 +38,15 @@ export default function SeoPage() {
     if (error || !site || !siteCode) return <p style={{ color: 'red' }}>{error}</p>
 
     const newSeoAudit = async (e: React.SyntheticEvent) => {
+        e.preventDefault()
         await createReport({
             analyzedUrl: targetUrl,
             keyword: targetKeyword,
             isFollowUp: false,
         }, siteCode)
+        const updated = await getReports(siteCode)
+        setReports(updated.content)
+        setCreateSeoPannel(false)
     }
 
     return <>
@@ -89,7 +93,7 @@ export default function SeoPage() {
                                 onChange={(e) => setTargetKeyword(e.target.value)} />
                         </div>
                         <button className={`button-primary button-with-icon ${styles.createSeoBtn}`} type="submit">
-                            Create Site
+                            Run Audit
                         </button>
                     </form>
                 </div>

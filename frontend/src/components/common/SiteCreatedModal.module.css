@@ -1,0 +1,41 @@
+.backdrop {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: white;
+    padding: 36px;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+    max-height: 90vh;
+    overflow: auto;
+}
+
+.instructions {
+    font-size: 14px;
+    line-height: 150%;
+}
+
+.snippet {
+    padding: 16px;
+    background: var(--color-gray);
+    font-size: 12px;
+    line-height: 100%;
+    font-family: var(--text-font-secondary);
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import type { SiteResponse } from "../types/site"
 import { getSite } from "../api/siteApi"
 import Breadcrumb from "../components/common/Breadcrumb"
@@ -14,6 +14,7 @@ import Filter from "../components/common/Filter"
 import { getReports } from "../api/reportApi"
 import type { SeoReportResponse } from "../types/seo_report"
 import { getCampaigns } from "../api/campaignApi"
+import SiteCreatedModal from "../components/common/SiteCreatedModal"
 
 const STATUS_CHANNEL: { label: string; value: CampaignChannel | undefined }[] = [
     { label: 'All', value: undefined },
@@ -44,6 +45,7 @@ export default function SingleSitePage() {
     const [error, setError] = useState<string | null>(null)
     const [report, setReport] = useState<SeoReportResponse | null>(null)
     const [campaigns, setCampaigns] = useState<CampaignResponse[]>([])
+    const [reconnect, setReconnect] = useState(false)
 
     useEffect(() => {
         if (!siteCode) { navigate('/app/404'); return }
@@ -82,7 +84,8 @@ export default function SingleSitePage() {
         setEventType(eventType)
     }
 
-    return <>
+    return <>{reconnect &&
+        <SiteCreatedModal siteCode={site.siteCode} siteName={site.siteName} onDone={() => setReconnect(false)} />}
         <section className={styles.heroSection}>
             <Breadcrumb
                 first="Site"
@@ -91,7 +94,10 @@ export default function SingleSitePage() {
             <div className={styles.titleContainer}>
                 <div>
                     <h1>{site.siteName}</h1>
-                    <p className={styles.siteCode}>SITE_CODE: {siteCode}</p>
+                    <div className={styles.codeContainer}>
+                        <p className={styles.siteCode}>SITE_CODE: {siteCode}</p>
+                        <button onClick={() => setReconnect(true)}>Reconnect Site</button>
+                    </div>
                 </div>
                 <div className={styles.heroButtons}>
                     <button
@@ -159,7 +165,7 @@ export default function SingleSitePage() {
                         <p className="titles">Recent Campaigns</p>
                     </div>
                     <div >
-                        <a href={`/app/${siteCode}/campaigns`} className={styles.viewAll}>View all</a>
+                        <Link to={`/app/${siteCode}/campaigns`} className={styles.viewAll}>View all</Link>
                         <button className={`button-primary button-small button-with-icon ${styles.newCampaign}`} onClick={() => navigate(`/app/${siteCode}/campaigns`, { state: { openCreate: true } })}>Create</button>
                     </div>
                 </div>
@@ -179,7 +185,7 @@ export default function SingleSitePage() {
                         <p className="titles">SEO Performance</p>
                     </div>
                     <div>
-                        <a href={`/app/${siteCode}/seo/reports`} className={styles.viewAll}>All reports</a>
+                        <Link to={`/app/${siteCode}/seo/reports`} className={styles.viewAll}>All reports</Link>
                         <button className={`button-primary button-small button-with-icon ${styles.newReport}`} onClick={() => navigate(`/app/${siteCode}/seo/reports`, { state: { openCreate: true } })}>New Audit</button>
                     </div>
                 </div>

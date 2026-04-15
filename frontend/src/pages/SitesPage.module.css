@@ -16,8 +16,9 @@
 
 .newSiteForm {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 2fr 1fr auto;
     gap: var(--gap-small);
+    align-items: end;
 }
 
 .createSiteBtn::before {

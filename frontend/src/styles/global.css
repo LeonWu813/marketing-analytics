@@ -19,3 +19,11 @@
 body {
     background-color: var(--color-background);
 }
+
+ol {
+    list-style-position: inside;
+}
+
+ol li {
+    margin-left: 10px;
+}
