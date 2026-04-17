@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import styles from "../common/CreateCampaignPannel.module.css"
 import type { CampaignChannel, CampaignResponse } from "../../types/campaign"
 import { createCampaign, deleteCampaign, updateCampaign } from "../../api/campaignApi";
@@ -36,8 +36,6 @@ export default function CreateCampaignPannel({ siteCode, onClose, onSubmit, id, 
     const [benchmarkValue, setBenchmarkValue] = useState<string>(
         campaign?.benchmarkMetricValue ? String(campaign.benchmarkMetricValue) : ''
     )
-    const [submitting, setSubmitting] = useState(false)
-    const [submitError, setSubmitError] = useState<string | null>(null)
 
     function closePannel() {
         setName('')
@@ -97,9 +95,7 @@ export default function CreateCampaignPannel({ siteCode, onClose, onSubmit, id, 
                 closePannel()
             }
         } catch {
-            setSubmitError('Failed to create campaign')
         } finally {
-            setSubmitting(false)
         }
     }
 
