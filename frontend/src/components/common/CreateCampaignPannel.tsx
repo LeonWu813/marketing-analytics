@@ -50,7 +50,7 @@ export default function CreateCampaignPannel({ siteCode, onClose, onSubmit, id, 
         onClose()
     }
 
-    const delCampaign = async (e: React.SyntheticEvent) => {
+    const delCampaign = async (_e: React.SyntheticEvent) => {
         if (id) {
             await deleteCampaign(id, siteCode)
             onSubmit()
