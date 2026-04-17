@@ -10,9 +10,6 @@ backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# Secrets — NEVER commit these
-backend/src/main/resources/application.properties
-
 # ── Frontend (React / Vite / Node) ───────────────────
 frontend/node_modules/
 frontend/dist/
