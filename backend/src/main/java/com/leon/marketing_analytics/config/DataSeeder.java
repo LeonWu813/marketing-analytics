@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.AccessDeniedException;
@@ -29,13 +30,17 @@ public class DataSeeder implements CommandLineRunner {
     private final SiteRepository siteRepository;
     private final EventRepository eventRepository;
     private final Random random = new Random();
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
         // Already create this user in database
         User user = userRepository.getByEmail("test@example.co")
-                .orElseThrow(() -> new AccessDeniedException("Please create a user: test@example.co"));
-
+                .orElseGet(() -> userRepository.save(User.builder()
+                        .email("test@example.co")
+                        .passwordHash(passwordEncoder.encode("Test1234!"))
+                        .build()));
+        
         Site site = siteRepository.getBySiteName("Test Site")
                 .orElseGet(() -> siteRepository.save(Site.builder()
                         .siteName("Test Site").siteCode(UUID.randomUUID().toString()).user(user).siteDomain("example.com")
