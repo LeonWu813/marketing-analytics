@@ -156,4 +156,4 @@ frontend/src/
 ├── store/          # Redux store + auth slice
 ├── types/          # TypeScript interfaces
 └── router/         # AppRouter + ProtectedRoute
-```
+```# deployment test

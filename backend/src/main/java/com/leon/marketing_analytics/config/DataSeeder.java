@@ -40,7 +40,7 @@ public class DataSeeder implements CommandLineRunner {
                         .email("test@example.co")
                         .passwordHash(passwordEncoder.encode("Test1234!"))
                         .build()));
-        
+
         Site site = siteRepository.getBySiteName("Test Site")
                 .orElseGet(() -> siteRepository.save(Site.builder()
                         .siteName("Test Site").siteCode(UUID.randomUUID().toString()).user(user).siteDomain("example.com")
