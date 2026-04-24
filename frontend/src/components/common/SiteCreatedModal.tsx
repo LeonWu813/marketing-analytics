@@ -13,7 +13,7 @@ export default function SiteCreatedModal({ siteCode, siteName, onDone }: Props) 
   const snippet = `<script>
 (function() {
   var SITE_CODE = "${siteCode}";
-  var API_URL = "https://your-api-url.com/api/events";
+  var API_URL = "https://ezily.io/api/events";
 
   function getUtmParams() {
     var params = new URLSearchParams(window.location.search);
