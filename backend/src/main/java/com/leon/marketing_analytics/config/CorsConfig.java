@@ -13,9 +13,17 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+        // Event ingest — allow any website's tracking snippet
+        registry.addMapping("/api/events")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "OPTIONS")
                 .allowedHeaders("Authorization", "Content-Type")
+                .maxAge(3600);
+
+        // Everything else — only your frontend
+        registry.addMapping("/**")
                 .allowedOrigins(allowedOrigin)
+                .allowedHeaders("Authorization", "Content-Type")
                 .allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS")
                 .allowCredentials(true)
                 .maxAge(3600);

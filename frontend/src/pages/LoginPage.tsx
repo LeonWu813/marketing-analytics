@@ -8,6 +8,8 @@ import styles from './LoginRegisterPage.module.css'
 import Footer from '../components/layout/Footer'
 import { APP_NAME } from '../src/constants'
 
+
+
 export default function LoginPage() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
